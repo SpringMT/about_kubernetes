@@ -17,4 +17,5 @@
 * [Do not collect pod metrics using Bottlerocket #1071](https://github.com/aws-observability/aws-otel-collector/issues/1071)
 
 
-
+### AWS Loadbalancer
+* VPC id は指定する https://github.com/awsdocs/amazon-eks-user-guide/pull/245
