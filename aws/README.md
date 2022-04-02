@@ -19,3 +19,6 @@
 
 ### AWS Loadbalancer
 * VPC id は指定する https://github.com/awsdocs/amazon-eks-user-guide/pull/245
+
+#### Karpenter
+* Fargateの場合はfargateProfileを作っておく
