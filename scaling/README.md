@@ -30,3 +30,7 @@ Vertical Pod Autoscaler should not be used with the Horizontal Pod Autoscaler (H
 * https://qiita.com/Ladicle/items/812c7cbee51c7ae8ccac
 
 
+## 資料
+* https://speakerdeck.com/bells17/cluster-autoscaler Cluster Autoscaler Kubernetes Meetup Tokyo #49
+* https://ccvanishing.hateblo.jp/entry/2018/10/02/203205 猫でもわかる Vertical Pod Autoscaler
+* 
