@@ -33,4 +33,4 @@ Vertical Pod Autoscaler should not be used with the Horizontal Pod Autoscaler (H
 ## 資料
 * https://speakerdeck.com/bells17/cluster-autoscaler Cluster Autoscaler Kubernetes Meetup Tokyo #49
 * https://ccvanishing.hateblo.jp/entry/2018/10/02/203205 猫でもわかる Vertical Pod Autoscaler
-* 
+* https://developer.mamezou-tech.com/containers/k8s/tutorial/ops/hpa/ オートスケーリング - Horizontal Pod Autoscaler(HPA)
