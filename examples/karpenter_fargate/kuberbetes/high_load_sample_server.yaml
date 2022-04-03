@@ -1,0 +1,121 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: high-load-sample-alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/target-group-attributes: load_balancing.algorithm.type=least_outstanding_requests
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: high-load-sample-svc
+              port:
+                number: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: high-load-sample-svc
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: NodePort
+  selector:
+    app: high-load-sample
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: high-load-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: high-load-sample
+  template:
+    metadata:
+      labels:
+        app: high-load-sample
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: high-load-sample
+          image: springmt/high_load_sample_server:v0.1.7
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 400m
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - containerPort: 8080
+---
+# spec https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/pkg/apis/autoscaling.k8s.io/v1/types.go
+#apiVersion: "autoscaling.k8s.io/v1"
+#kind: VerticalPodAutoscaler
+#metadata:
+#  name: high-load-sample-vpa
+#spec:
+#  # recommenders field can be unset when using the default recommender.
+#  # When using an alternative recommender, the alternative recommender's name
+#  # can be specified as the following in a list.
+#  # recommenders: 
+#  #   - name: 'alternative'
+#  targetRef:
+#    apiVersion: "apps/v1"
+#    kind: Deployment
+#    name: high-load-sample
+#  updatePolicy:
+#    updateMode: Auto
+#  resourcePolicy:
+#    containerPolicies:
+#      - containerName: high-load-sample
+#        minAllowed:
+#          cpu: 100m
+#        maxAllowed:
+#          cpu: 4
+#        controlledResources: ["cpu"]
+---
+# https://qiita.com/shmurata/items/8ebaf74028365fc950c9
+# https://developer.mamezou-tech.com/containers/k8s/tutorial/ops/hpa/
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: high-load-sample-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: high-load-sample
+  minReplicas: 1
+  maxReplicas: 30
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Percent
+          value: 25
+          periodSeconds: 15
+

@@ -18,10 +18,14 @@ fargateProfiles:
       # scheduled onto Fargate:
       - namespace: kube-system
       - namespace: fargate-container-insights
+  - name: karpenter
+    selectors:
+      - namespace: karpenter
 
-karpenter:
-  version: '0.8.0'
-  createServiceAccount: true
+# eksctlのkarpenter supportは0.8.0はサポートしていない
+#karpenter:
+#  version: '0.8.0'
+#  createServiceAccount: true
 
 iam:
   withOIDC: true
